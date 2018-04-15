@@ -144,6 +144,14 @@ color:#999">
         text-anchor: middle;
         text-align: center;
       }
+
+      .text_outline{
+        text-shadow:
+         -2px -2px 0 white,
+         2px -2px 0 white,
+         -2px 2px 0 white,
+         2px 2px 0 white;
+      }
     </style>
 
     <body>
@@ -186,7 +194,7 @@ color:#999">
               "Alzheimer's Disease"
             ])
           .range(
-            ["#B9B8B1",
+            ["#E8E8E8",
               "#ff8c00",
               "#8a89a6",
               "#7b6888",
@@ -337,11 +345,12 @@ color:#999">
         function printAge(ageString) {
           svg.selectAll(".centerText").remove();
           var text_center = svg.append("text")
-            .attr("class", "centerText")
+            .attr("class", "centerText text_outline")
             .attr('x', 0).attr('y', 20)
             .text("Age:" + ageString)
             .style("text-anchor", "middle")
             .style("font-size", "50px")
+            .style("font-weight","800px")
             .style("fill", "black");
         }
 
@@ -350,7 +359,7 @@ color:#999">
         function center_circle(prev_r, cur_r) {
           var center_circle = svg.append("circle")
             .attr('cx', 0).attr('cy', 0)
-            .attr("fill", "#CED3D3")
+            .attr("fill", "#B9B9B9")
             .attr("r", prev_r)
             .transition()
             .duration(500)
@@ -733,7 +742,7 @@ color:#999">
                 pos_array.push({
                   x: xpos,
                   y: ypos,
-                  color: "pink",
+                  color: "#ffcc00",
                   category: assignCategory(curID),
                   age: curID
                 })
@@ -808,7 +817,7 @@ color:#999">
                   return (dot.category == d.category && d.category != -1) // select all that are in the same  category with the circle you are hovering on
                 })
                 .transition()
-                .style("fill", "pink");
+                .style("fill", "#ffcc00");
               // console.log(d.category);
               // console.log(d.age);
               if (d.category != -1) {
@@ -890,10 +899,11 @@ color:#999">
             svg2.append("circle")
               .attr("cx", s.x)
               .attr("cy", s.y)
-              .attr("r", 12)
+              .attr("r", 15)
               .style("fill", s.color)
               .transition().duration(1000)
               .attr("cy", s.y + getRandomInt(300))
+              .attr("r", 10)
               .delay(getRandomInt(1000))
               // .style("fill", "#CED3D3")
               .transition().duration(300)
