@@ -147,6 +147,14 @@ color:#999">
          -2px 2px 0 white,
          2px 2px 0 white;
       }
+
+      .text_outline_1{
+        text-shadow:
+         -1px -1px 0 white,
+         1px -1px 0 white,
+         -1px 1px 0 white,
+         1px 1px 0 white;
+      }
     </style>
 
     <body>
@@ -269,6 +277,42 @@ color:#999">
           radius1 = Math.min(width, height) / 2;
 
         // set the colors for each {cause of death} category
+        // var colorMap = d3.scaleOrdinal()
+        //   .domain(
+        //     ["Others",
+        //       "Unintentional Injury",
+        //       "Congenital Anomalies",
+        //       "Homicide",
+        //       "Malignant Neoplasms",
+        //       "Heart Disease",
+        //       "Short Gestation",
+        //       "SIDS",
+        //       "Maternal Pregnancy Comp.",
+        //       "Suicide",
+        //       "Liver Disease",
+        //       "Chronic Low. Respiratory Disease",
+        //       "Diabetes Mellitus",
+        //       "Cerebrovascular",
+        //       "Alzheimer's Disease"
+        //     ])
+        //   .range(
+        //     [ "#505463",    //Others
+        //       "#891C56",    //Unintentional Injury
+        //       "#5CC6BC",    //Congenital Anomalies
+        //       "#D62337",    //Homicide
+        //       "#FFFFFF",    //Malignant Neoplasms
+        //       "#C23E82",    //Heart Disease
+        //       "#F2E0C9",    //Short Gestation
+        //       "#722B25",    //SIDS
+        //       "#2E8B57",    //Maternal Pregnancy Comp
+        //       "#0095C7",    //Suicide
+        //       "#A6523E",    //Liver Disease
+        //       "#DBDA3D",    //Chronic Low. Respiratory Disease
+        //       "#DE5F75",    //Diabetes Mellitus
+        //       "#F8BD5B",    //Cerebrovascular
+        //       "#A583CF"     //Alzheimer's Disease
+        //     ]);
+
         var colorMap = d3.scaleOrdinal()
           .domain(
             ["Others",
@@ -288,22 +332,24 @@ color:#999">
               "Alzheimer's Disease"
             ])
           .range(
-            [ "#505463",    //Others
-              "#891C56",    //Unintentional Injury
-              "#5CC6BC",    //Congenital Anomalies
-              "#D62337",    //Homicide
-              "#FFFFFF",    //Malignant Neoplasms
-              "#C23E82",    //Heart Disease
-              "#F2E0C9",    //Short Gestation
+            [ "#C6C0B6",    //Others
+              "#BF7054",    //Unintentional Injury
+              "#8a89a6",    //Congenital Anomalies
+              "#6b486b",    //Homicide
+              "#C3A670",    //Malignant Neoplasms
+              "#628CB6",    //Heart Disease
+              "#919561",    //Short Gestation
               "#722B25",    //SIDS
-              "#2E8B57",    //Maternal Pregnancy Comp
-              "#0095C7",    //Suicide
+              "#777963",    //Maternal Pregnancy Comp
+              "#2C4A78",    //Suicide
               "#A6523E",    //Liver Disease
-              "#DBDA3D",    //Chronic Low. Respiratory Disease
-              "#DE5F75",    //Diabetes Mellitus
-              "#F8BD5B",    //Cerebrovascular
+              "#54896E",    //Chronic Low. Respiratory Disease
+              "#724B44",    //Diabetes Mellitus
+              "#3D594D",    //Cerebrovascular
               "#A583CF"     //Alzheimer's Disease
             ]);
+
+
         var list_of_cat = ["Unintentional Injury",
           "Congenital Anomalies",
           "Homicide",
@@ -395,7 +441,7 @@ color:#999">
 
             function plotGraphAnimation(idx, doFlyCircle) {
               center_circle(prev_r_list[idx], cur_r_list[idx]);
-              printAge(age_string_list[idx]);
+              printAge(idx,age_string_list,total_dead_num_list);
               changePieChart(idx,age_top_cos_list[idx], doFlyCircle);
             }
             var idx = 0;
@@ -439,16 +485,35 @@ color:#999">
         // plotGraph1Main();
 
         // print age group text in the center of the box
-        function printAge(ageString) {
+        function printAge(idx,age_string_list,total_dead_num_list) {
           svg.selectAll(".centerText").remove();
           var text_center = svg.append("text")
             .attr("class", "centerText text_outline")
             .attr('x', 0).attr('y', 20)
-            .text("Age:" + ageString)
+            .text("Age:" + age_string_list[idx])
             .style("text-anchor", "middle")
             .style("font-size", "50px")
             .style("font-weight","800px")
             .style("fill", "black");
+
+            var text_upper = svg.append("text")
+              .attr("class", "centerText")
+              .attr('x', 0).attr('y', -28)
+              .text("accumulative deaths:")
+              .style("text-anchor", "middle")
+              .style("font-size", "20px")
+              .style("font-weight","600px")
+              .style("fill", "#BC6F6B");
+
+
+            var text_down = svg.append("text")
+              .attr("class", "centerText")
+              .attr('x', 0).attr('y', 64)
+              .text(function(){return total_dead_num_list[idx];})
+              .style("text-anchor", "middle")
+              .style("font-size", "32px")
+              .style("font-weight","600px")
+              .style("fill", "#BC6F6B");
         }
 
         // Increase the size of the center circle per transition as age goes up
@@ -564,8 +629,8 @@ color:#999">
             setTimeout(function() {
               //console.log(pieAnimDuration);
               // re-show explain text and play
-              playButton(svg_box, 960/2 ,300);
-              p1_add_text(svg_box, 960/2 ,100);
+              playButton(svg_box, 960/2 - 20 ,330);
+              p1_add_text(svg_box, 960/2, 100);
 
               // remove all pie char elements
               svg.selectAll(".center_circle").remove();
@@ -782,30 +847,42 @@ color:#999">
 
       <p class="intro_text"><span class="Variant">How much time is gone in your lifetime</span></p>
       <p class="intro_text"> Have you thought about how you would be spending your time left? When you select your age and gender, the grey dots represent how many years you have lived your life, whereas the green dots represent how much time you have left. In the U.S., the average lifetime is 81 years for women, and 76 years for men.</p>
-      <p class="intro_text"> Hover and click on an age range to explore how average people would spend their time during that age. How would you plan to spend your time for the rest of your life? </p>
+      <p class="intro_text"> Hover and click on an age range to explore how people are spending their time during that age. How would you plan to spend your time for the rest of your life? </p>
 
-      <div class="age_slider_div span_line">
-        <p id="age_slider_text">Your age: 20</p>
-        <span><input type="range" min="10" max="80" value="20" step="1" class="slider" id="age_slider"></span>
+      <div class="span_line" style="margin-bottom:30px;">
+
+        <div id="age_slider_div" style="width:40%; float:left;">
+          <p id="age_slider_text" style="
+          font-size: 15pt">Your age: 20</p>
+          <input type="range" min="10" max="80" value="20" step="1" class="slider" id="age_slider">
+        </div>
+
+      <!-- </br> -->
+
+        <div id="gener_switch_div" style="
+        width:40%; float:right;">
+          <p id="gender_slider_text" style="
+          font-size: 15pt;">Your gender: Female</p>
+          <label class="switch_out">
+            <input type="checkbox" id="gender_box">
+            <div class="switch round"></div>
+          </label>
+        </div>
+        <div style="clear:both"> </div>
+      </div>
+
       </div>
 
       </br>
 
-      <div class="gener_switch_div span_line">
-        <p id="gender_slider_text">Your gender: Female</p>
-        <label class="switch_out">
-          <input type="checkbox" id="gender_box">
-          <div class="switch round"></div>
-        </label>
-      </div>
-
-      </br>
-
-      <div class="dead_example span_line">
+      <!-- <div class="dead_example span_line">
         <p id="dead_example_text_id" class="dead_example_text"> someone died </p>
+      </div> -->
+
+      <div id="plot_3_div">
       </div>
 
-      <div id="ij">
+      <div id="ageGrid">
       </div>
 
       <script>
@@ -929,7 +1006,7 @@ color:#999">
           document.getElementById("gender_slider_text").innerHTML = "Your gender: " + getGender();
           var grid_data = gen_grid_data(age,gender);
           showCircles(grid_data);
-          svg3 = svg2.append("svg").attr("width", 800).attr("height", 800);
+          renew_svg3();
         }
         /**************************************/
 
@@ -998,10 +1075,8 @@ color:#999">
                 var ageGroup = getAgeGroupRange(d.age);
                 var dropping = gen_dropping_data(ageGroup, getGender());
                 var gender_selected = getGender();
-
-                plot_time_use(gender_selected, ageGroup);
-
                 drop_rand(dropping);
+                plot_time_use(gender_selected, ageGroup);
               }
             });
         }
@@ -1030,7 +1105,7 @@ color:#999">
         /**************************************/
 
         /************ Elements ****************/
-        var svg2 = d3.select("#ij")
+        var svg2 = d3.select("#ageGrid")
                     .append("svg").attr("width", 600).attr("height", 800);
 
         // age slider listener:
@@ -1044,7 +1119,8 @@ color:#999">
 
           var grid_data = gen_grid_data(age, gender);
           showCircles(grid_data);
-          svg3 = svg2.append("svg").attr("width", 400).attr("height", 800);
+
+          renew_svg3();
           // var ageGroup = getAgeGroupRange(age); //[int, int]
           // var dropping = gen_dropping_data(ageGroup, gender);
           // drop_rand(dropping);
@@ -1098,35 +1174,39 @@ color:#999">
 
       </script>
 
-      <div id="plot_3_div">
-      </div>
+
       <script>
 
-      var svg3 = svg2
-        .append("svg").attr("width", 800).attr("height", 800);
+        var svg3;
+        renew_svg3();
 
-      var bubble_colorMap = d3.scaleOrdinal()
-        .domain(
-          ["Personal Care, including Sleep",
-            "Household Activities",
-            "Working",
-            "Education",
-            "Leisure and Sports",
-            "Purchasing",
-            "Phone Calls, E-mail"
-          ])
-        .range([
-            "#ff8c00",
-            "#8a89a6",
-            "#7b6888",
-            "#6b486b",
-            "#a05d56",
-            "#D58054",
-            "#6F608E"
-          ]);
+        var bubble_colorMap = d3.scaleOrdinal()
+          .domain(
+            ["Personal Care, including Sleep",
+              "Household Activities",
+              "Working",
+              "Education",
+              "Leisure and Sports",
+              "Purchasing",
+              "Phone Calls, E-mail"
+            ])
+          .range([
+              "#ff8c00",
+              "#8a89a6",
+              "#7b6888",
+              "#6b486b",
+              "#a05d56",
+              "#D58054",
+              "#6F608E"
+            ]);
 
         var selected_gender = "M";
         var selected_age_group = "2024";
+
+        function renew_svg3() {
+          //svg2.remove(".svg3");
+          svg3 = svg2.append("svg").attr("class", "svg3").attr("width", 800).attr("height", 800);
+        }
 
          // in csv it is "2024", return the start of age group
         function age_convert_csv(csv_age){
@@ -1143,8 +1223,11 @@ color:#999">
         // plot_time_use(selected_gender, selected_age_group);
 
         function plot_time_use(selected_gender, age_group) {
+          //svg3.selectAll("circle").remove();
           svg3.selectAll(".cluster_circle").remove();
+
           d3.csv("timeuse.csv", (error, rawData) => {
+
             var filtered_gender_age_data = rawData.filter(function(d) {
                return ( gender_convert_csv(d.Gender) == selected_gender
                  && age_convert_csv(d.Age) == age_group[0]);
@@ -1153,7 +1236,7 @@ color:#999">
             for(item of filtered_gender_age_data) {
               item["selected"] = false;
             }
-            console.log(filtered_gender_age_data);
+            //console.log(filtered_gender_age_data);
 
             var time_use_r_scale =
               d3.scaleSqrt()
@@ -1169,6 +1252,8 @@ color:#999">
                return ( time_use_r_scale(d.Duration) > 5);
             });
 
+            console.log(filtered_gender_age_data);
+
             var simulation = d3.forceSimulation(filtered_gender_age_data)
               .force('charge', d3.forceManyBody().strength(15))
               .force('center', d3.forceCenter(width / 2, height / 2))
@@ -1181,6 +1266,7 @@ color:#999">
             var u = svg3
               .selectAll('circle')
               .data(filtered_gender_age_data);
+            //console.log(u);
             u.enter()
               .append('circle')
               //.attr("class", "cluster_circle")
@@ -1214,6 +1300,7 @@ color:#999">
                     })
                     .transition()
                     .style("opacity", 1);
+                    console.log(d.Activity);
                   p3_highlight_legend(d, 400, 430, d.Activity);
                 }
               )
@@ -1226,12 +1313,14 @@ color:#999">
                   svg3.selectAll("circle")
                     .transition()
                     .style("opacity", 0.8);
+
+                  p3_remove_highlight_legend();
                   }
               )
               .on('click',
                 function(d) {
                   //console.log(d);
-                  p3_highlight_legend(d, 400, 430, d.Activity);
+                  //p3_highlight_legend(d, 400, 430, d.Activity);
                 }
               );
             // this can manually speed up the force simulation
@@ -1241,6 +1330,8 @@ color:#999">
             function ticked() {
               //console.log(filtered_gender_age_data);
               var u = svg3.selectAll('circle');
+
+              if(u.size() == 0) return;
 
               u.data(filtered_gender_age_data)
                 .enter()
@@ -1254,17 +1345,20 @@ color:#999">
                 .attr('cy', function(d) {
                   return d.y + 300;
                 });
-
             }
             //u.exit().remove();
             // add legend texts to the bubbles by side
             p3_add_legend(filtered_gender_age_data, 400, 430);
+            p3_remove_highlight_legend();
+
+            function p3_remove_highlight_legend() {
+              svg3.selectAll(".p3_highlight_legend").remove();
+            }
 
             function p3_add_legend(filtered_gender_age_data, x, y_start){
 
               svg3.selectAll(".p3_legend_grey").remove();
               svg3.selectAll(".p3_legend_title").remove();
-
 
               var p3_legend_text = svg3.append("g")
                     .attr("transform", "translate("+ x +","+ y_start +")");
@@ -1275,15 +1369,30 @@ color:#999">
 
               // console.log("here");
               var first_line = filtered_gender_age_data[0];
+              var format_gender = d3.scaleOrdinal()
+                .domain(
+                  ["F","M"])
+                .range(
+                  ["Female",
+                    "Male"]);
+
+              function format_age(csvAge){
+                  if (csvAge.length == 4){
+                    return csvAge.substring(0,2) + "-" +csvAge.substring(2,4);
+                  }
+                  else {
+                    return csvAge + "+";
+                  }
+              }
 
               p3_legends.append("text")
                 .attr("class", "p3_legend_title")
                 .attr('x', 0).attr('y',
                 -40)
-                .text(function(){
-                  return first_line.Gender   + ", Age" + first_line.Age;
-                }
-              )
+                .text( function() {
+                    return format_gender(first_line.Gender)   + ", Age: " + format_age(first_line.Age);
+                  }
+                )
                 .style("text-anchor", "middle")
                 .style("font-size", "20px")
                 .style("font-weight","300px")
@@ -1294,26 +1403,28 @@ color:#999">
                 .attr("class", "p3_legend_grey")
                 .attr('x', 0).attr('y', function(d,i)
                 {return i * 30;})
-                .text(function(d){
+                .text(function(d) {
+                  if(d == null || d == undefined) {
+                    return;
+                  }
                   return d.Activity   + ": " + d.Duration   + "hr/day";
-                }
-              )
+                })
                 .style("text-anchor", "middle")
                 .style("font-size", "20px")
                 .style("font-weight","300px")
                 .style("fill", "white")
                 .style("opacity","0.7");
-
             }
 
             function p3_highlight_legend(selected_data, x, y_start, activityName){
-              console.log("A");
+              // console.log("A");
               svg3.selectAll(".p3_highlight_legend").remove();
 
               // if(selected_data == null || selected_data == undefined) {
               //   return;
               // }
-              console.log(filtered_gender_age_data);
+              //console.log(selected_data);
+              //console.log(filtered_gender_age_data);
               var p3_highlight_legend_group = svg3.append("g")
                     .attr("transform", "translate("+ x +","+ y_start +")");
 
@@ -1326,10 +1437,13 @@ color:#999">
                 .attr('x', 0)
                 .attr('y', function(d,i) {return i * 30;})
                 .text(function(d){
+                  //console.log("d.Activity = " + d.Activity);
+                  //console.log("selected_data.Activity = " + selected_data.Activity);
+                  //console.log("d.Activity == selected_data.Activity : " + d.Activity == selected_data.Activity);
                   //console.log(d.Activity + ":" + d.selected);
-                  if (d.Activity == activityName){
-                    //console.log("here");
-                    return d.Activity   + ": " + d.Duration + "hr/day";
+                  if (d.Activity == selected_data.Activity) {
+                    //console.log(d.Activity);
+                    return selected_data.Activity   + ": " + selected_data.Duration + "hr/day";
                   }
                   else return "";
                 }
